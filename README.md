@@ -16,31 +16,42 @@ Sua equipe foi contratada para corrigir esse problema: substituir o armazenament
 - Servidor **Java 17+** com endpoints HTTP e validações de entrada.
 - Catálogo de cinco equipamentos.
 - Cadastro, listagem e cancelamento de reservas em memória.
-- Scripts de execução sem Maven e preparação automática do driver SQLite JDBC (primeira execução com internet).
+- Scripts de execução para Windows e Linux/macOS, sem Maven, com preparação automática das bibliotecas JDBC quando necessário.
 - Interface `RepositorioReservas` e classe `RepositorioSqlite` com pontos de implementação.
 
 A execução inicial usa `RepositorioMemoria`, portanto a perda de dados após reiniciar **é intencional**.
 
 ## Preparação e execução
 
-Você precisa somente do **JDK 17 ou superior** (Java e `javac`). **Não é necessário instalar Maven.**
+Para executar o ReservaLab, você precisa do **JDK 17 ou superior**, com os comandos `java` e `javac` disponíveis. **Não é necessário instalar Maven, SQLite nem qualquer outra ferramenta de gerenciamento de dependências.**
 
-Clone o repositório publicado pelo professor (não há branches especiais).
+1. Clone o repositório disponibilizado pelo professor ou baixe os arquivos do projeto no GitHub.
+2. Abra a pasta do projeto, onde estão o `README.md` e os scripts de execução.
+3. Inicie o sistema de acordo com o sistema operacional:
+   - **Windows:** execute `executar.bat`.
+   - **Linux/macOS:** abra o terminal na pasta do projeto e execute `sh executar.sh`.
+4. Acesse **http://localhost:8777** no navegador.
 
-- **Windows:** execute `executar.bat` (ou `./executar.bat` no terminal apropriado).
-- **Linux/macOS:** execute `./executar.sh` (ou `sh executar.sh`).
+### Bibliotecas JDBC
 
-Os scripts compilam o Java e iniciam o servidor. Na primeira execução, **se houver internet**, tentam obter automaticamente as bibliotecas do SQLite JDBC diretamente do Maven Central, colocando-as em `lib/`. Após esse primeiro download, funcionam offline. **Este ZIP não contém os JARs**; a primeira execução com SQLite precisa obtê-los pela internet, ou você deve recebê-los do professor na pasta `lib/`.
+O `executar.bat` e o `executar.sh` **já verificam as bibliotecas necessárias**. Se estiverem faltando, tentam baixá-las automaticamente para a pasta `lib/`, por meio da ferramenta `ferramentas/PrepararDependencias.java`. Não é preciso executar outro script para preparar as dependências.
 
-**Sem internet?** A versão inicial em memória continua executando sem driver; para usar o `RepositorioSqlite`, o driver precisa estar presente. O professor pode disponibilizar a pasta `lib/` com os arquivos JAR para eliminar também o download inicial. Outra opção é executar `preparar_jdbc.bat` ou `./preparar_jdbc.sh` em uma conexão com internet.
+- **Primeira execução:** pode exigir conexão com a internet, caso os arquivos JAR ainda não estejam na pasta `lib/`.
+- **Execuções seguintes:** os JARs já baixados são reutilizados, inclusive sem internet.
+- **Se o download falhar:** o terminal mostrará quais arquivos faltam e onde obtê-los. A versão inicial, que usa armazenamento em memória, ainda pode funcionar; a solução JDBC precisa das bibliotecas disponíveis em `lib/`.
 
-Se o download automático falhar, o script informará o link oficial de cada JAR. Não é necessário instalar nada globalmente.
+### Verificando o problema
 
-Depois, abra **http://localhost:8777** no navegador.
+A versão inicial usa `RepositorioMemoria`, por isso ainda **não salva os dados definitivamente**. Para observar esse comportamento:
 
-A porta pode ser alterada com a variável de ambiente `PORT`. O banco da solução ficará em `data/reservalab.db`, que **não deve ser enviado para o GitHub**.
+1. Cadastre uma reserva na interface.
+2. Encerre o servidor pressionando `Ctrl+C` na janela do terminal.
+3. Inicie o sistema novamente pelo mesmo script.
+4. Consulte o histórico e observe que a reserva desapareceu.
 
-**Demonstração do problema:** crie uma reserva, encerre o servidor (`Ctrl+C`), inicie-o novamente e verifique o histórico.
+Depois de implementar a solução com SQLite, a reserva deverá permanecer registrada mesmo após reiniciar a aplicação.
+
+A porta padrão é `8777` e pode ser alterada pela variável de ambiente `PORT`. O arquivo do banco da solução será armazenado em `data/reservalab.db`; **não inclua esse arquivo na entrega nem o publique no GitHub**.
 
 ## Desafios obrigatórios
 
@@ -95,27 +106,34 @@ Serão observados: persistência real dos dados, integração Java/SQLite via JD
 
 **Não há necessidade de apresentação formal.** A conclusão das funcionalidades obrigatórias é suficiente para demonstrar o objetivo da atividade; recursos extras são opcionais e não substituem os requisitos.
 
-## Mapa do projeto
+## Estrutura do projeto
 
 ```text
-src/main/java/br/edu/reservalab/
-  App.java                   # Servidor HTTP e validação das requisições
-  RepositorioReservas.java   # Contrato de acesso aos dados
-  RepositorioMemoria.java    # Implementação atual (perde os dados)
-  RepositorioSqlite.java     # Aqui fica a maior parte do desafio
-  Equipamento.java          # Modelo
-  Reserva.java              # Modelo
-  RegraException.java       # Erros de negócio
-src/main/resources/web/
-  index.html                 # Interface pronta
-  app.js                     # Integração HTTP
-  styles.css                 # Visual da aplicação
-executar.bat / executar.sh  # Compilam e iniciam sem Maven
-preparar_jdbc.bat / .sh      # Obtêm os JARs na primeira execução
-ferramentas/                 # Código Java do preparador
-lib/                         # Bibliotecas JDBC após o download
-LICENCAS_E_DEPENDENCIAS.md   # Créditos e licenças
-.gitignore                   # Evita enviar banco e arquivos gerados
+ReservaLab/
+├── src/
+│   └── main/
+│       ├── java/br/edu/reservalab/
+│       │   ├── App.java                 # Servidor HTTP e requisições
+│       │   ├── RepositorioReservas.java  # Contrato de acesso aos dados
+│       │   ├── RepositorioMemoria.java   # Armazenamento temporário atual
+│       │   ├── RepositorioSqlite.java    # Implementação JDBC a desenvolver
+│       │   ├── Equipamento.java         # Modelo de equipamento
+│       │   ├── Reserva.java             # Modelo de reserva
+│       │   └── RegraException.java      # Erros de negócio
+│       └── resources/web/
+│           ├── index.html               # Interface
+│           ├── app.js                   # Comunicação com o servidor
+│           └── styles.css               # Estilos
+├── ferramentas/
+│   └── PrepararDependencias.java        # Preparação automática do JDBC
+├── lib/                                  # JARs baixados ou fornecidos
+├── executar.bat                          # Inicia o projeto no Windows
+├── executar.sh                           # Inicia no Linux/macOS
+├── .gitignore                            # Exclui arquivos gerados do Git
+├── LICENCAS_E_DEPENDENCIAS.md            # Créditos das bibliotecas
+└── README.md                             # Instruções e enunciado
 ```
+
+A pasta oculta `.git/` pode estar presente quando o projeto é clonado; ela contém o histórico local de controle de versão e não participa da execução da aplicação. As pastas `build/` e `data/` poderão ser criadas durante o uso do sistema e não devem ser publicadas.
 
 **Atenção:** o projeto é um exercício educacional e não implementa autenticação de usuários. Execute-o apenas no ambiente local de desenvolvimento.
