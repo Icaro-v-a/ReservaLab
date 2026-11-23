@@ -16,14 +16,14 @@ Sua equipe foi contratada para corrigir esse problema: substituir o armazenament
 - Servidor **Java 17+** com endpoints HTTP e validações de entrada.
 - Catálogo de cinco equipamentos.
 - Cadastro, listagem e cancelamento de reservas em memória.
-- Scripts de execução para Windows e Linux/macOS, sem Maven, com preparação automática das bibliotecas JDBC quando necessário.
+- Scripts de execução para Windows e Linux/macOS, sem Maven; as bibliotecas JDBC necessárias já estão incluídas na pasta `lib/`.
 - Interface `RepositorioReservas` e classe `RepositorioSqlite` com pontos de implementação.
 
 A execução inicial usa `RepositorioMemoria`, portanto a perda de dados após reiniciar **é intencional**.
 
 ## Preparação e execução
 
-Para executar o ReservaLab, você precisa do **JDK 17 ou superior**, com os comandos `java` e `javac` disponíveis. **Não é necessário instalar Maven, SQLite nem qualquer outra ferramenta de gerenciamento de dependências.**
+Para executar o ReservaLab, você precisa do **JDK 17 ou superior**, com os comandos `java` e `javac` disponíveis. **Não é necessário instalar Maven, SQLite ou bibliotecas adicionais**: os arquivos JAR necessários já acompanham o projeto na pasta `lib/`.
 
 1. Clone o repositório disponibilizado pelo professor ou baixe os arquivos do projeto no GitHub.
 2. Abra a pasta do projeto, onde estão o `README.md` e os scripts de execução.
@@ -34,11 +34,9 @@ Para executar o ReservaLab, você precisa do **JDK 17 ou superior**, com os coma
 
 ### Bibliotecas JDBC
 
-O `executar.bat` e o `executar.sh` **já verificam as bibliotecas necessárias**. Se estiverem faltando, tentam baixá-las automaticamente para a pasta `lib/`, por meio da ferramenta `ferramentas/PrepararDependencias.java`. Não é preciso executar outro script para preparar as dependências.
+As bibliotecas necessárias à conexão com o SQLite **já estão incluídas na pasta `lib/`**. Basta iniciar o projeto pelo script correspondente ao seu sistema operacional: ele utiliza essas bibliotecas automaticamente, sem instalação adicional e sem depender de internet para obtê-las.
 
-- **Primeira execução:** pode exigir conexão com a internet, caso os arquivos JAR ainda não estejam na pasta `lib/`.
-- **Execuções seguintes:** os JARs já baixados são reutilizados, inclusive sem internet.
-- **Se o download falhar:** o terminal mostrará quais arquivos faltam e onde obtê-los. A versão inicial, que usa armazenamento em memória, ainda pode funcionar; a solução JDBC precisa das bibliotecas disponíveis em `lib/`.
+Não exclua os arquivos `.jar` da pasta `lib/`, pois eles são necessários para executar a implementação com JDBC.
 
 ### Verificando o problema
 
@@ -98,7 +96,7 @@ Depois de concluir a classe `RepositorioSqlite`, altere a inicialização em `Ap
 
 Entregue o código-fonte com a implementação JDBC, as instruções para executar e **um registro curto da verificação**, informando quais testes manuais você realizou e o que observou antes e depois da reinicialização.
 
-O arquivo `.db`, a pasta `build/` e outras saídas geradas localmente não devem fazer parte da entrega. Se o projeto for enviado como repositório, a pasta `lib/` pode incluir apenas os JARs originais das dependências (com as licenças indicadas).
+O arquivo `.db`, a pasta `build/` e outras saídas geradas localmente não devem fazer parte da entrega. Mantenha as bibliotecas `.jar` fornecidas na pasta `lib/`, para que o projeto possa ser executado sem configuração adicional.
 
 ## Critérios de avaliação
 
@@ -125,12 +123,11 @@ ReservaLab/
 │           ├── app.js                   # Comunicação com o servidor
 │           └── styles.css               # Estilos
 ├── ferramentas/
-│   └── PrepararDependencias.java        # Preparação automática do JDBC
-├── lib/                                  # JARs baixados ou fornecidos
+│   └── PrepararDependencias.java        # Verificação auxiliar das bibliotecas
+├── lib/                                  # Bibliotecas JDBC já fornecidas
 ├── executar.bat                          # Inicia o projeto no Windows
 ├── executar.sh                           # Inicia no Linux/macOS
 ├── .gitignore                            # Exclui arquivos gerados do Git
-├── LICENCAS_E_DEPENDENCIAS.md            # Créditos das bibliotecas
 └── README.md                             # Instruções e enunciado
 ```
 
