@@ -1,4 +1,4 @@
-# O Sistema que Esquecia Tudo — ReservaLab
+# O Sistema que Esquecia Tudo: ReservaLab
 
 ## Situação-problema
 
@@ -55,25 +55,25 @@ A porta padrão é `8777` e pode ser alterada pela variável de ambiente `PORT`.
 
 ## Desafios obrigatórios
 
-### 1 — Modelar e criar o banco de dados
+### 1: Modelar e criar o banco de dados
 
 Crie as tabelas `equipamentos` e `reservas` em SQLite. A tabela de reservas deve guardar: identificador, equipamento, responsável, data, turno e status. Defina chave primária e vínculo entre a reserva e o equipamento.
 
 A criação do banco deve acontecer de forma automática na inicialização, quando ele ainda não existir. O catálogo deve ser preenchido apenas na primeira execução, sem duplicar equipamentos em reinicializações posteriores.
 
-### 2 — Consultar equipamentos do banco
+### 2: Consultar equipamentos do banco
 
 Implemente `listarEquipamentos()` em `RepositorioSqlite`, utilizando JDBC. O catálogo exibido no navegador deve passar a vir de um `SELECT`, e não de uma lista fixa em memória.
 
-### 3 — Salvar e listar reservas
+### 3: Salvar e listar reservas
 
 Implemente `criar()` e `listarReservas()` com instruções SQL e `PreparedStatement` quando houver parâmetros externos. Cada nova reserva deve gerar um identificador e aparecer no histórico mesmo após reiniciar o servidor.
 
-### 4 — Cancelar sem apagar o histórico
+### 4: Cancelar sem apagar o histórico
 
 Implemente `cancelar()`: o status de uma reserva ativa deve mudar para `CANCELADA`. Não exclua fisicamente esse registro, pois o sistema precisa preservar o histórico de agendamentos.
 
-### 5 — Garantir as regras de negócio
+### 5: Garantir as regras de negócio
 
 - O mesmo equipamento **não pode ter duas reservas ativas para a mesma data e turno**.
 - Uma reserva cancelada **libera novamente** aquele equipamento no período correspondente.
@@ -81,7 +81,7 @@ Implemente `cancelar()`: o status de uma reserva ativa deve mudar para `CANCELAD
 - O sistema deve continuar rejeitando nomes, datas e turnos inválidos.
 - As consultas e alterações devem utilizar parâmetros adequados, sem concatenar entradas do usuário no SQL.
 
-### 6 — Integrar ao sistema já existente
+### 6: Integrar ao sistema já existente
 
 Depois de concluir a classe `RepositorioSqlite`, altere a inicialização em `App.java` para utilizar o novo repositório. O front-end não deve perder nenhuma funcionalidade.
 
